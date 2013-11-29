@@ -26,12 +26,15 @@
         {
             try
             {
-                var domainDNS = GetDomains().FirstOrDefault();
-                var baseDN = GetBaseDN(domainDNS);
-                var domainController = GetDomainController();
                 var userLoggedIn = Environment.UserName;
                 var windowsIdentity = WindowsIdentity.GetCurrent() != null ? WindowsIdentity.GetCurrent().Name : string.Empty;
 
+                var domain = Domain.GetCurrentDomain();
+                
+                var domainDNS = domain.Name;
+                var baseDN = GetBaseDN(domainDNS);
+                var domainController = domain.DomainControllers.Count > 0 ? domain.DomainControllers[0].Name : string.Empty;
+                
                 // Print result
                 Console.WriteLine(
                     resultTemplate,
@@ -48,19 +51,6 @@
             }
         }
 
-        private static List<string> GetDomains()
-        {
-            var domains = new List<string>();
-
-            // Querying the current Forest for the domains within
-            foreach (Domain domain in Forest.GetCurrentForest().Domains)
-            {
-                domains.Add(domain.Name);
-            }
-
-            return domains;
-        }
-
         private static string GetBaseDN(string domainDNS)
         {
             if (string.IsNullOrEmpty(domainDNS))
@@ -70,14 +60,6 @@
 
             var rootDSE = new DirectoryEntry("LDAP://" + domainDNS);
             return rootDSE.Properties["distinguishedName"].Value as string;
-        }
-
-        private static string GetDomainController()
-        {
-            using (var context = new PrincipalContext(ContextType.Domain))
-            {
-                return context.ConnectedServer;
-            }
         }
     }
 }
