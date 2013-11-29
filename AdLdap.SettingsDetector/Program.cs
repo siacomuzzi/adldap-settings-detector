@@ -14,7 +14,7 @@
             "\"domainDNS\": \"{0}\", " +
             "\"baseDN\": \"{1}\", " +
             "\"domainController\": \"{2}\", " +
-            "\"userLoggedIn\": \"{3}\" " +
+            "\"userLoggedIn\": \"{3}\", " +
             "\"windowsIdentity\": \"{4}\" " +
         "}}";
 
